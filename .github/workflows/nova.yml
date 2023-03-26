@@ -37,7 +37,9 @@ jobs:
       - name: Kube init
         env:
           KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}      
-        run: echo "${KUBE_CONFIG_DATA}" | base64 -d > ~/.kube/config             
+        run: |
+          mkdir ~/.kube
+          echo "${KUBE_CONFIG_DATA}" | base64 -d > ~/.kube/config             
 #         run: |
 #           echo kube init!!!
 #           echo -n $(KUBE_CONFIG_DATA) | base64 -d > ~/.kube/config
