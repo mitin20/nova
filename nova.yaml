@@ -1,0 +1,14 @@
+containers: false
+context: ""
+desired-versions: {}
+format: json
+helm: false
+include-all: false
+namespace: ""
+output-file: ""
+poll-artifacthub: true
+show-errored-containers: false
+show-non-semver: false
+show-old: false
+url: []
+wide: false

@@ -1,0 +1,125 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- develop
+
+pool:
+  vmImage: ubuntu-latest
+
+stages:
+  - stage: dev
+    jobs:
+      - job:
+        steps:
+        - script: echo Hello, nova!
+          displayName: 'Hello Nova'
+
+        - script: |
+            curl -L "https://github.com/FairwindsOps/nova/releases/download/3.2.0/nova_3.2.0_linux_amd64.tar.gz" > nova.tar.gz
+            tar -xvf nova.tar.gz
+            #sudo mv nova /usr/local/bin/
+            ls -lha
+            #chmod +x nov
+            ./nova version
+          displayName: 'Install PreRequisites'
+
+        # - script: |
+        #     echo kube init!!!
+        #     echo -n $(KUBE_CONFIG_DATA) | base64 -d > ~/.kube/config
+        #     echo kube end!!!
+        #   displayName: 'kube init'
+
+        - task: DownloadSecureFile@1
+          inputs:
+              secureFile: 'config-dev'
+
+        - script: |
+            mkdir -p $HOME/.kube
+            cp $(Agent.TempDirectory)/config-dev  $HOME/.kube/config 
+            #kubectl get nodes
+          displayName: 'kube init & verify'
+
+        - script: ./nova find --wide 
+          displayName: 'Chart validator' 
+
+        - script: ./nova find --containers --show-errored-containers 
+          displayName: 'Container validation' 
+          
+  - stage: qa
+    jobs:
+      - job:
+        steps:
+        - script: echo Hello, nova!
+          displayName: 'Hello Nova'
+
+        - script: |
+            curl -L "https://github.com/FairwindsOps/nova/releases/download/3.2.0/nova_3.2.0_linux_amd64.tar.gz" > nova.tar.gz
+            tar -xvf nova.tar.gz
+            #sudo mv nova /usr/local/bin/
+            ls -lha
+            #chmod +x nov
+            ./nova version
+          displayName: 'Install PreRequisites'
+
+        # - script: |
+        #     echo kube init!!!
+        #     echo -n $(KUBE_CONFIG_DATA) | base64 -d > ~/.kube/config
+        #     echo kube end!!!
+        #   displayName: 'kube init'
+
+        - task: DownloadSecureFile@1
+          inputs:
+              secureFile: 'config-qa'
+
+        - script: |
+            mkdir -p $HOME/.kube
+            cp $(Agent.TempDirectory)/config-qa  $HOME/.kube/config 
+            #kubectl get nodes
+          displayName: 'kube init & verify'
+
+        - script: ./nova find --wide 
+          displayName: 'Chart validator' 
+
+        - script: ./nova find --containers --show-errored-containers 
+          displayName: 'Container validation'           
+
+  - stage: uat
+    jobs:
+      - job:
+        steps:
+        - script: echo Hello, nova!
+          displayName: 'Hello Nova'
+
+        - script: |
+            curl -L "https://github.com/FairwindsOps/nova/releases/download/3.2.0/nova_3.2.0_linux_amd64.tar.gz" > nova.tar.gz
+            tar -xvf nova.tar.gz
+            #sudo mv nova /usr/local/bin/
+            ls -lha
+            #chmod +x nov
+            ./nova version
+          displayName: 'Install PreRequisites'
+
+        # - script: |
+        #     echo kube init!!!
+        #     echo -n $(KUBE_CONFIG_DATA) | base64 -d > ~/.kube/config
+        #     echo kube end!!!
+        #   displayName: 'kube init'
+
+        - task: DownloadSecureFile@1
+          inputs:
+              secureFile: 'config-uat'
+
+        - script: |
+            mkdir -p $HOME/.kube
+            cp $(Agent.TempDirectory)/config-uat  $HOME/.kube/config 
+            #kubectl get nodes
+          displayName: 'kube init & verify'
+
+        - script: ./nova find --wide 
+          displayName: 'Chart validator' 
+
+        - script: ./nova find --containers --show-errored-containers 
+          displayName: 'Container validation'           
